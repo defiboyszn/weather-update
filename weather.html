@@ -1,0 +1,89 @@
+<!Doctype html>
+<html>
+<head>
+  <title>Weather Update</title>
+</head>  
+<body>
+<div id="app" class="w-full max-w-xs"></div>
+</body>
+<script type="module">
+  import Dative from 'https://cdn.jsdelivr.net/gh/dativeJs/dativejs@main/dist/dative.es.min.js';
+  Dative.importstyle('tailwind');
+  Dative.debug(true);
+  var app = new Dative({
+    target: '#app',
+    data: ()=>({
+      wdata: [],
+      rdata: [],
+      idata: [],
+      title: 'Weather Forcast',
+      heading: 'Weather Update',
+      icon: '',
+      city: 'Type a City and Press Enter',
+      h4: 'dark',
+      err: ''
+    }),
+    template(){
+      return `
+      <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <h1 class="text-monospace font-bold text-dark-500 text-lg">{{ title }}</h1>
+      <div class="search-fm">
+        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="search" ref="search" bind:placeholder="city" on:keyup="$search" />
+        <p :text="err"></p>
+      </div>  
+        <div class="main">
+        <h1 class="font-bold text-lg" :html="heading"></h1>
+            <h4  class="text-{{ h4 }}">City: ${this.data.wdata.name || ""}</h4>
+            <h4 class="text-{{ h4 }}">Region: ${this.data.wdata.region || ""}</h4>
+            <h4 class="text-{{ h4 }}">Country: ${this.data.wdata.country || ""}</h4>
+             <h4 class="text-{{ h4 }}">${this.data.wdata.name || ""} Is In the ${this.data.rdata.is_day === 0 ? "Night" : "Day"} and is <br /> {{ idata.text }}</h4>
+            <h4 class="temp font-semibold"><span class="cc text-${this.data.rdata.temp_c < 30 ? "success" : "danger" }">${this.data.rdata.temp_c || "0"}&#x2103;</span><br/><span class="ff text-${this.data.rdata.temp_f < 63 ? "success" : "danger" }">${this.data.rdata.temp_f || "0"}&#x2109;</span></h4>
+            <img class="icon" :src="idata.icon" alt="" />
+        </div>   
+        <h3 class="copy">Made With <span>&#9829;</span>By <a href="https://tobithedev.github.io" class="text-green-500">TOBI</a></h3>
+      </div>  
+      `
+    },
+    methods:{
+    async $search(event){
+     if(event.keyCode == 13){
+      var query = this.$ref.search.value;
+      var API_KEY = '2ce02765e1c647e4941175529211405';
+      await fetch(`http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${query}&aqi=no`)
+        .then(res=>res.json())
+        .then(data =>{
+          this.data.wdata = data.location;
+          this.data.rdata = data.current;
+          this.data.idata = data.current.condition
+          })
+          .catch(err=>this.data.err = err)
+      this.$ref.search.value = '';
+      }
+     }
+    },
+    mounted(){
+      var meta = document.createElement('meta')
+      meta.name = "viewport";
+      meta.content = "width=device-width, initial-scale=1";
+      document.head.appendChild(meta);
+    }
+  })
+  app.render();
+</script>
+<style scoped>
+  #app{
+    position: relative;
+    margin: 0px auto;
+  }
+  .temp{
+    position: absolute;
+    right: 20px;
+    bottom: 50px;
+  }
+  .icon{
+    position: absolute;
+    right: 20px;
+    bottom: 90px;
+  }
+</style>
+</html>
