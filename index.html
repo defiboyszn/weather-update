@@ -7,8 +7,8 @@
 <div id="app" class="w-full max-w-xs"></div>
 </body>
 <script type="module">
-  import Dative from 'https://cdn.jsdelivr.net/gh/dativeJs/dativejs@main/dist/dative.es.min.js';
-  Dative.importstyle('tailwind');
+  import Dative from 'https://cdn.jsdelivr.net/gh/dativeJs/dativejs@v1/dist/dative.es.min.js';
+  Dative.importstyle('https://unpkg.com/tailwindcss@2.2.15/dist/tailwind.min');
   Dative.debug(true);
   var app = new Dative({
     target: '#app',
@@ -20,7 +20,7 @@
       heading: 'Weather Update',
       icon: '',
       city: 'Type a City and Press Enter',
-      h4: 'dark',
+      h4: 'black',
       err: ''
     }),
     template(){
